@@ -1,3 +1,7 @@
+function player(Name, gamePiece) {
+    return {Name, gamePiece};
+};
+
 const gameBoard = (function () {
     
     const DIMENSION = 3;
@@ -41,7 +45,7 @@ const gameBoard = (function () {
         resultDisplay.setAttribute('id','result-display');
 
         document.body.appendChild(turnTracker);
-        document.body.appendChild(resultDisplay);       
+        document.body.appendChild(resultDisplay);
     }
 
     const clearPageBoard = () => {
@@ -50,6 +54,14 @@ const gameBoard = (function () {
             space.innerHTML = '';
         }
     }
+
+    function clearNewPlayersForm() {
+        const currentForm = document.querySelector('form');
+        if (currentForm) {
+            currentForm.replaceChildren();
+            currentForm.remove();
+        };
+    };
 
     const createWaysToWin = () => {
         theWays = [
@@ -70,7 +82,6 @@ const gameBoard = (function () {
         }
         return theWays;
     }
-    const waysToWin = createWaysToWin();
 
     const playerMove = (gamePiece, row, col) => {    
         if (board[row][col] == '') {
@@ -80,20 +91,85 @@ const gameBoard = (function () {
         };
     }
 
-    const addNewPlayer = () => {
-        let gamePiece = '';
-        let isViableGamePiece = false;
+    const createNewPlayersForm = () => {
+        const newPlayerForm = document.createElement('form');
+    
+        newPlayerForm.setAttribute('id','form');
+        newPlayerForm.style.cssText = 
+            'display: flex; flex-direction: column; flex-basis: 50px; margin: 10px' ;
+    
+        const newNameOneLabel = document.createElement('label');
+        newNameOneLabel.style.cssText = 'width: 300px';
+        newNameOneLabel.innerHTML = 'Player 1 Name'
+        newPlayerForm.appendChild(newNameOneLabel);
+        
+        const newNameOneField = document.createElement('input');
+        newNameOneField.style.cssText = 'width: 300px;'
+        newNameOneField.setAttribute('id','name_one');
+        newPlayerForm.appendChild(newNameOneField);
 
-        while (!isViableGamePiece) {
-            gamePiece = prompt(`What letter do you want to use?: `);
-            if (gamePiece.length == 1) isViableGamePiece = true;
-        }
+        const newPieceOneLabel = document.createElement('label');
+        newPieceOneLabel.style.cssText = 'width: 300px';
+        newPieceOneLabel.innerHTML = 'Player 1 Game Piece'
+        newPlayerForm.appendChild(newPieceOneLabel);
+        
+        const newPieceOneField = document.createElement('input');
+        newPieceOneField.style.cssText = 'width: 300px;'
+        newPieceOneField .setAttribute('id','piece_one');
+        newPieceOneField .setAttribute('maxlength','1');
+        newPlayerForm.appendChild(newPieceOneField);
 
-        return player(gamePiece);
+        const newNameTwoLabel = document.createElement('label');
+        newNameTwoLabel.style.cssText = 'width: 300px';
+        newNameTwoLabel.innerHTML = 'Player 2 Name'
+        newPlayerForm.appendChild(newNameTwoLabel);
+        
+        const newNameTwoField = document.createElement('input');
+        newNameTwoField.style.cssText = 'width: 300px;'
+        newNameTwoField.setAttribute('id','name_two');
+        newPlayerForm.appendChild(newNameTwoField);
+
+        const newPieceTwoLabel = document.createElement('label');
+        newPieceTwoLabel.style.cssText = 'width: 300px';
+        newPieceTwoLabel.innerHTML = 'Player 2 Game Piece'
+        newPlayerForm.appendChild(newPieceTwoLabel);
+        
+        const newPieceTwoField = document.createElement('input');
+        newPieceTwoField.style.cssText = 'width: 300px;'
+        newPieceTwoField .setAttribute('id','piece_two');
+        newPieceTwoField .setAttribute('maxlength','1');
+        newPlayerForm.appendChild(newPieceTwoField);
+            
+        const submitButton = document.createElement('button');
+        submitButton.setAttribute('id', 'submit_players');
+        submitButton.style.cssText = 'width: 300px; margin: 5px'
+        submitButton.innerHTML = 'Start!';
+        newPlayerForm.appendChild(submitButton);
+
+        document.body.appendChild(newPlayerForm);
+
+        submitButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            
+
+            
+        })
+    }
+
+    const createNewPlayers = () => {
+        const newPlayerForm = document.getElementById('form');
+        const playerOne = player(newPlayerForm.name_one.value,
+            newPlayerForm.piece_one.value);
+        const playerTwo = player(newPlayerForm.name_two.value,
+            newPlayerForm.piece_two.value);
+
+        players = [playerOne, playerTwo]
+        return players
     }
 
     const checkBoard = (gamePiece) => {
    
+        const waysToWin = createWaysToWin();
         playerSpots = [];
 
         for (let i = 0; i < DIMENSION; i++) {
@@ -113,11 +189,9 @@ const gameBoard = (function () {
         return false;
     }
 
-    function playGame() {
-        const playerOne = addNewPlayer();
-        const playerTwo = addNewPlayer();
-        const playerOneTurn = `It's Player 1's Turn`
-        const playerTwoTurn = `It's Player 2's Turn`
+    const playGame = (playerOne, playerTwo) => {
+        const playerOneTurn = `It's ${playerOne.Name}'s Turn`
+        const playerTwoTurn = `It's ${playerTwo.Name}'s Turn`
 
         let playerOneWon = false;
         let playerTwoWon = false;
@@ -152,24 +226,48 @@ const gameBoard = (function () {
                     playerTwoWon = checkBoard(playerTwo.gamePiece);
                 }
 
-                if (playerOneWon) {resultDisplay.innerHTML = 'Player 1 Wins!'};
+                if (playerOneWon) {
+                    turnTracker.innerHTML = '';
+                    resultDisplay.innerHTML = `${playerOne.Name} Wins!`;
+                    } 
+                
+                
+                if (playerTwoWon) {
+                    turnTracker.innerHTML = '';
+                    resultDisplay.innerHTML = `${playerTwo.Name} Wins!`;
+                }
 
-                if (playerTwoWon) {resultDisplay.innerHTML = 'Player 2 Wins!'}
-
-                if (numOfTurns == 9) {resultDisplay.innerHTML = `It's a tie`}
-            })   
-        }
+                if (numOfTurns == 9) {
+                    turnTracker.innerHTML = '';
+                    resultDisplay.innerHTML = `It's a tie`; 
+                }   
+        });
         
         clearPageBoard();
-    }   
+    }  
+}
 
-    return {makeArrayBoard, displayGame, playGame}
+    const startGame = () => {
+        createNewPlayersForm();
+        let players;
+
+        const submitButton = document.getElementById('submit_players');
+        submitButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            
+            makeArrayBoard();
+            displayGame();
+            
+            players = createNewPlayers();
+            clearNewPlayersForm();
+            playGame(players[0],players[1])  
+        });
+    }
+
+
+    return {startGame}
 })();
 
-function player(gamePiece) {
-    return {gamePiece};
-};
 
-gameBoard.makeArrayBoard();
-gameBoard.displayGame();
-gameBoard.playGame();
+
+gameBoard.startGame();
