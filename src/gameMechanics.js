@@ -8,8 +8,8 @@ function GameBoard(DIM = 3) {
 
     function makeArrayBoard() {
         const board = Array(DIM)
-            .fill(Array(DIM)
-            .fill([undefined]));
+            .fill()
+            .map(() => {return Array(DIM).fill('')});
             
         return board
     }
@@ -28,7 +28,34 @@ function GameBoard(DIM = 3) {
 
         board[x][y] = gamePiece;
         return true;
+    }
 
+    function checkForWin(gamePiece) {
+        const horizontalWin = board.some(
+            (row) => {return row.every((value) => value === gamePiece)}
+        );
+
+        if (horizontalWin) return true;
+
+        const vertCombos = [];
+        for (let i = 0; i < DIM; i++) {
+            vertCombos.push([]);
+            for (let j = 0; j < DIM; j++) {
+                vertCombos[i].push(board[j][i])
+            }
+            const vertWin = vertCombos[i]
+                .every((value) => value === gamePiece);
+            if (vertWin) return true;
+        }
+
+        const diagCombos = [[board[0][0], board[1][1], board[2][2]],
+                             [board[0][2], board[1][1], board[2][0]]]
+        
+        const diagWin = diagCombos.some(
+        (row) => {return row.every((value) => value === gamePiece)});
+        if (diagWin) return true;
+
+        return false;
     }
 
     const checkBoard = (gamePiece) => {
@@ -49,5 +76,5 @@ function GameBoard(DIM = 3) {
 
     const board = makeArrayBoard();
 
-    return {board, isValidPosition, tic}
+    return {board, isValidPosition, tic, checkForWin}
 }
