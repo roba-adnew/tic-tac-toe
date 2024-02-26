@@ -10,8 +10,10 @@ function createElement(tag, id = '', innerHTML = '') {
 }
 
 function displayGame() {
-    const pageBoard = createElement('table', 'board');
-    document.body.appendChild(pageBoard);
+    const gameDiv = createElement('div', 'boardDiv')
+    const table = createElement('table', 'table');
+    gameDiv.appendChild(table);
+    document.body.appendChild(gameDiv);
 
     for (let i = 0; i < game.board.length; i++) {
         const row = createElement('tr');
@@ -22,7 +24,7 @@ function displayGame() {
             cell.appendChild(button);
             row.appendChild(cell);
         }
-        pageBoard.appendChild(row)
+        table.appendChild(row)
     }
     
     const turnTracker = createElement('div', 'turn-tracker');
@@ -108,39 +110,49 @@ function clearNewPlayersForm() {
 
 
 export function createNewPlayersForm() {
+    const formDiv = createElement('div', 'formDiv');
     const newPlayerForm = createElement('form', 'form');
+    formDiv.appendChild(newPlayerForm);
 
+    const p1NameDiv = createElement('div','p1name');
+    newPlayerForm.appendChild(p1NameDiv)
     const newNameOneLabel = createElement('label','label1','Player 1 Name');
-    newPlayerForm.appendChild(newNameOneLabel);
+    p1NameDiv.appendChild(newNameOneLabel);
     
     const newNameOneField = createElement('input','name_one');
-    newPlayerForm.appendChild(newNameOneField);
+    p1NameDiv.appendChild(newNameOneField);
 
+    const p1PieceDiv = createElement('div','p1Piece');
+    newPlayerForm.appendChild(p1PieceDiv);
     const newPieceOneLabel = createElement('label','label1a','Player 1 Game Piece');
-    newPlayerForm.appendChild(newPieceOneLabel);
+    p1PieceDiv.appendChild(newPieceOneLabel);
     
     const newPieceOneField = createElement('input','piece_one');
     newPieceOneField.setAttribute('maxlength','1');
-    newPlayerForm.appendChild(newPieceOneField);
+    p1PieceDiv.appendChild(newPieceOneField);
 
+    const p2NameDiv = createElement('div','p2name');
+    newPlayerForm.appendChild(p2NameDiv)
     const newNameTwoLabel = createElement('label','label2','Player 2 Name');
-    newPlayerForm.appendChild(newNameTwoLabel);
+    p2NameDiv.appendChild(newNameTwoLabel);
     
     const newNameTwoField = createElement('input','name_two');
-    newPlayerForm.appendChild(newNameTwoField);
+    p2NameDiv.appendChild(newNameTwoField);
 
+    const p2PieceDiv = createElement('div', 'p2Piece');
+    newPlayerForm.appendChild(p2PieceDiv);
     const newPieceTwoLabel = createElement('label','label2a','Player 2 Game Piece');
-    newPlayerForm.appendChild(newPieceTwoLabel);
+    p2PieceDiv.appendChild(newPieceTwoLabel);
     
     const newPieceTwoField = createElement('input','piece_two');
     newPieceTwoField.setAttribute('maxlength','1');
-    newPlayerForm.appendChild(newPieceTwoField);
+    p2PieceDiv.appendChild(newPieceTwoField);
         
     const submitButton = createElement('button','submit_players','Start!');
-    newPlayerForm.appendChild(submitButton);
+    formDiv.appendChild(submitButton);
     submitButton.addEventListener('click', startGame);
 
-    document.body.appendChild(newPlayerForm);
+    document.body.appendChild(formDiv);
 }
 
 
