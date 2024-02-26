@@ -1,69 +1,76 @@
-function displayGame() {
+import { Player, GameBoard } from './gameMechanics';
 
-    const pageBoard = document.createElement('div');
-    pageBoard.setAttribute('id', 'board');
-    pageBoard.setAttribute('style', '{display: flex; justify-content: center; align-items:center; flex-basis:500px}')
+const game = GameBoard();
+
+function createElement(tag, id = '', innerHTML = '') {
+    const element = document.createElement(tag);
+    element.id = id;
+    element.innerHTML = innerHTML;
+    return element
+}
+
+function displayGame() {
+    const pageBoard = createElement('table', 'board');
     document.body.appendChild(pageBoard);
 
-    for (let i = 0; i < DIM; i++) {
-
-        const newRow = document.createElement('div');
-        for (let j = 0; j < DIM; j++) {
-            const newCell = document.createElement('button');
-            newCell.setAttribute('class', 'space');
-            newCell.setAttribute('id', 'cell'+ i + '-' + j);
-            newCell.innerHTML = board[i][j];
-            newRow.appendChild(newCell);
+    for (let i = 0; i < game.board.length; i++) {
+        const row = createElement('tr');
+        for (let j = 0; j < game.board.length; j++) {
+            const cell = createElement('td',`(${i},${j})`);
+            cell.classList.add('space');
+            const button = createElement('button', `(${i},${j})`);
+            cell.appendChild(button);
+            row.appendChild(cell);
         }
-        pageBoard.appendChild(newRow)
+        pageBoard.appendChild(row)
     }
     
-    const turnTracker = document.createElement('div');
-    turnTracker.setAttribute('id','turn-tracker');
-    
-    const resultDisplay = document.createElement('div');
-    resultDisplay.setAttribute('id','result-display');
+    const turnTracker = createElement('div', 'turn-tracker');
+    const resultDisplay = createElement('div', 'result-display');
 
     document.body.appendChild(turnTracker);
     document.body.appendChild(resultDisplay);
 }
 
-const playGame = (playerOne, playerTwo) => {
-    const playerOneTurn = `It's ${playerOne.Name}'s Turn`
-    const playerTwoTurn = `It's ${playerTwo.Name}'s Turn`
+function enableGame(playerOne, playerTwo) {
+    const playerOneTurn = `It's ${playerOne.name}'s Turn`
+    const playerTwoTurn = `It's ${playerTwo.name}'s Turn`
 
     let playerOneWon = false;
     let playerTwoWon = false;
 
-    turnTracker = document.getElementById('turn-tracker');
-    resultDisplay = document.getElementById('result-display');
+    const turnTracker = document.getElementById('turn-tracker');
+    const resultDisplay = document.getElementById('result-display');
 
     let thisPlayersTurn = 1;
-    turnTracker.innerHTML = playerOneTurn;
-    resultDisplay.innerHTML = '';
+    turnTracker.innerText = playerOneTurn;
+    resultDisplay.innerText = '';
 
     const gameSpaces = document.getElementsByClassName('space');
-    numOfTurns = 0;
+    let turns = 0;
 
     for (let space of gameSpaces) {   
-        space.addEventListener('click', event => {
-            row = space.id.substring(4,5);
-            col = space.id.substring(6,7);
+        space.addEventListener('click', () => {
+            const row = space.id.substring(1,2);
+            const col = space.id.substring(4,5);
+            const move  = [row,col];
 
             if (thisPlayersTurn == 1) {
-                playerMove(playerOne.gamePiece, row, col);
+                game.tic(move, playerOne.gamePiece);
+                space.innerHTML = playerOne.gamePiece;
                 thisPlayersTurn = 2;
                 turnTracker.innerHTML = playerTwoTurn;
-                numOfTurns++;
-                playerOneWon = checkBoard(playerOne.gamePiece);
+                playerOneWon = game.checkForWin(playerOne.gamePiece);
             } 
             else {
-                playerMove(playerTwo.gamePiece, row, col);
+                game.tic(move, playerTwo.gamePiece);
+                space.innerHTML = playerTwo.gamePiece;
                 thisPlayersTurn = 1;
                 turnTracker.innerHTML = playerOneTurn;
-                numOfTurns++;
-                playerTwoWon = checkBoard(playerTwo.gamePiece);
+                playerTwoWon = game.checkForWin(playerTwo.gamePiece);
             }
+
+            turns++
 
             if (playerOneWon) {
                 turnTracker.innerHTML = '';
@@ -76,14 +83,12 @@ const playGame = (playerOne, playerTwo) => {
                 resultDisplay.innerHTML = `${playerTwo.Name} Wins!`;
             }
 
-            if (numOfTurns == 9) {
+            if (turns === 9) {
                 turnTracker.innerHTML = '';
                 resultDisplay.innerHTML = `It's a tie`; 
             }   
-    });
-    
-    clearPageBoard();
-}  
+    }, { once: true });
+    }  
 }
 
 const clearPageBoard = () => {
@@ -101,104 +106,57 @@ function clearNewPlayersForm() {
     };
 };
 
-const playerMove = (gamePiece, row, col) => {    
-    if (board[row][col] == '') {
-        board[row][col] += gamePiece;
-        const correspondingSpace = document.getElementById('cell'+row+'-'+col);
-        correspondingSpace.innerHTML = board[row][col];
-    };
-}
 
-const createNewPlayersForm = () => {
-    const newPlayerForm = document.createElement('form');
+export function createNewPlayersForm() {
+    const newPlayerForm = createElement('form', 'form');
 
-    newPlayerForm.setAttribute('id','form');
-    newPlayerForm.style.cssText = 
-        'display: flex; flex-direction: column; flex-basis: 50px; margin: 10px' ;
-
-    const newNameOneLabel = document.createElement('label');
-    newNameOneLabel.style.cssText = 'width: 300px';
-    newNameOneLabel.innerHTML = 'Player 1 Name'
+    const newNameOneLabel = createElement('label','label1','Player 1 Name');
     newPlayerForm.appendChild(newNameOneLabel);
     
-    const newNameOneField = document.createElement('input');
-    newNameOneField.style.cssText = 'width: 300px;'
-    newNameOneField.setAttribute('id','name_one');
+    const newNameOneField = createElement('input','name_one');
     newPlayerForm.appendChild(newNameOneField);
 
-    const newPieceOneLabel = document.createElement('label');
-    newPieceOneLabel.style.cssText = 'width: 300px';
-    newPieceOneLabel.innerHTML = 'Player 1 Game Piece'
+    const newPieceOneLabel = createElement('label','label1a','Player 1 Game Piece');
     newPlayerForm.appendChild(newPieceOneLabel);
     
-    const newPieceOneField = document.createElement('input');
-    newPieceOneField.style.cssText = 'width: 300px;'
-    newPieceOneField .setAttribute('id','piece_one');
-    newPieceOneField .setAttribute('maxlength','1');
+    const newPieceOneField = createElement('input','piece_one');
+    newPieceOneField.setAttribute('maxlength','1');
     newPlayerForm.appendChild(newPieceOneField);
 
-    const newNameTwoLabel = document.createElement('label');
-    newNameTwoLabel.style.cssText = 'width: 300px';
-    newNameTwoLabel.innerHTML = 'Player 2 Name'
+    const newNameTwoLabel = createElement('label','label2','Player 2 Name');
     newPlayerForm.appendChild(newNameTwoLabel);
     
-    const newNameTwoField = document.createElement('input');
-    newNameTwoField.style.cssText = 'width: 300px;'
-    newNameTwoField.setAttribute('id','name_two');
+    const newNameTwoField = createElement('input','name_two');
     newPlayerForm.appendChild(newNameTwoField);
 
-    const newPieceTwoLabel = document.createElement('label');
-    newPieceTwoLabel.style.cssText = 'width: 300px';
-    newPieceTwoLabel.innerHTML = 'Player 2 Game Piece'
+    const newPieceTwoLabel = createElement('label','label2a','Player 2 Game Piece');
     newPlayerForm.appendChild(newPieceTwoLabel);
     
-    const newPieceTwoField = document.createElement('input');
-    newPieceTwoField.style.cssText = 'width: 300px;'
-    newPieceTwoField .setAttribute('id','piece_two');
-    newPieceTwoField .setAttribute('maxlength','1');
+    const newPieceTwoField = createElement('input','piece_two');
+    newPieceTwoField.setAttribute('maxlength','1');
     newPlayerForm.appendChild(newPieceTwoField);
         
-    const submitButton = document.createElement('button');
-    submitButton.setAttribute('id', 'submit_players');
-    submitButton.style.cssText = 'width: 300px; margin: 5px'
-    submitButton.innerHTML = 'Start!';
+    const submitButton = createElement('button','submit_players','Start!');
     newPlayerForm.appendChild(submitButton);
+    submitButton.addEventListener('click', startGame);
 
     document.body.appendChild(newPlayerForm);
-
-    submitButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        
-
-        
-    })
 }
 
 
-const createNewPlayers = () => {
+function createNewPlayers() {
     const newPlayerForm = document.getElementById('form');
-    const playerOne = player(newPlayerForm.name_one.value,
+    const playerOne = Player(newPlayerForm.name_one.value,
         newPlayerForm.piece_one.value);
-    const playerTwo = player(newPlayerForm.name_two.value,
+    const playerTwo = Player(newPlayerForm.name_two.value,
         newPlayerForm.piece_two.value);
 
-    players = [playerOne, playerTwo]
-    return players
+    return [playerOne, playerTwo];
 }
 
-const startGame = () => {
-    createNewPlayersForm();
-    let players;
-
-    const submitButton = document.getElementById('submit_players');
-    submitButton.addEventListener('click', function(event) {
-        event.preventDefault();
-        
-        makeArrayBoard();
-        displayGame();
-        
-        players = createNewPlayers();
-        clearNewPlayersForm();
-        playGame(players[0],players[1])  
-    });
+function startGame() {
+    const players = createNewPlayers();
+    document.body.replaceChildren();
+    displayGame();
+    enableGame(players[0],players[1])    
 }

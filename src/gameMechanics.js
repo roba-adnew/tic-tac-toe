@@ -1,10 +1,8 @@
-module.exports = GameBoard;
-
-function Player(name, gamePiece) {
+export function Player(name, gamePiece) {
     return {name, gamePiece};
 };
 
-function GameBoard(DIM = 3) {
+export function GameBoard(DIM = 3) {
 
     function makeArrayBoard() {
         const board = Array(DIM)
@@ -28,6 +26,25 @@ function GameBoard(DIM = 3) {
 
         board[x][y] = gamePiece;
         return true;
+    }
+
+    function computerTic(gamePiece) {
+        if (!isValidPosition(position)) return false;
+        
+        let x,y;
+        let move;
+        let isMoveGood = false;
+
+        do {
+            [x,y] = Array
+                .from({length: 2}, () => Math.round(Math.random() * (DIM - 1)));
+            
+            if (board[x][y]) continue;
+            isMoveGood = true;
+        }
+        while (!isMoveGood)
+        
+        return move;
     }
 
     function checkForWin(gamePiece) {
@@ -58,23 +75,13 @@ function GameBoard(DIM = 3) {
         return false;
     }
 
-    const checkBoard = (gamePiece) => {
-   
-        const waysToWin = createWaysToWin();
-        playerSpots = [];
-
-        for (let i = 0; i < DIM; i++) {
-            for (let j = 0; j < DIM; j++) {
-                if (board[i][j] == gamePiece) {
-                    playerSpots.push([i,j]);
-                }
-            }
-        }
-
-        return false;
-    }
-
     const board = makeArrayBoard();
 
-    return {board, isValidPosition, tic, checkForWin}
+    return {
+            board, 
+            isValidPosition, 
+            tic, 
+            computerTic,
+            checkForWin
+            }
 }
