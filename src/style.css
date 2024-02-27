@@ -1,3 +1,7 @@
+body {
+    font-family: 'Franklin Gothic Medium', Arial, sans-serif;
+  }
+
 label {
     display: inline-block; 
     text-align: right;
@@ -12,29 +16,39 @@ label {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-  }  
+  } 
 
-button {
-    align-self: center;
-    width: 100px
+form {
+    padding: 40px;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
 }
 
 #submit-players {
-    margin: 5px
+    margin: 10px;
+    align-self: center;
+    width: 200px
 }
 
-body {
-    font-family: 'Franklin Gothic Medium', Arial, sans-serif;
-  }
-  
-td, #space {
+td {
     border: 1px solid black;
     padding: 8px;
     width: 40px;
     height: 40px;
     align-content: center;
+    font-size: 30px;
 }
 
+.spaceButton {
+    width: 40px;
+    height: 40px;
+  }
+
 table {
-border-spacing: 4px;
+    border-spacing: 4px;
+}
+
+#turn-tracker {
+    padding: 20px;
 }

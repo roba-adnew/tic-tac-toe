@@ -20,7 +20,9 @@ function displayGame() {
         for (let j = 0; j < game.board.length; j++) {
             const cell = createElement('td',`(${i},${j})`);
             cell.classList.add('space');
+            cell.align = 'center';
             const button = createElement('button', `(${i},${j})`);
+            button.classList.add('spaceButton');
             cell.appendChild(button);
             row.appendChild(cell);
         }
@@ -30,8 +32,8 @@ function displayGame() {
     const turnTracker = createElement('div', 'turn-tracker');
     const resultDisplay = createElement('div', 'result-display');
 
-    document.body.appendChild(turnTracker);
-    document.body.appendChild(resultDisplay);
+    gameDiv.appendChild(turnTracker);
+    gameDiv.appendChild(resultDisplay);
 }
 
 function enableGame(playerOne, playerTwo) {
@@ -149,7 +151,7 @@ export function createNewPlayersForm() {
     p2PieceDiv.appendChild(newPieceTwoField);
         
     const submitButton = createElement('button','submit_players','Start!');
-    formDiv.appendChild(submitButton);
+    newPlayerForm.appendChild(submitButton);
     submitButton.addEventListener('click', startGame);
 
     document.body.appendChild(formDiv);
