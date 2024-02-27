@@ -26,9 +26,7 @@ form {
 }
 
 #submit-players {
-    margin: 10px;
-    align-self: center;
-    width: 200px
+
 }
 
 td {
@@ -49,6 +47,15 @@ table {
     border-spacing: 4px;
 }
 
-#turn-tracker {
-    padding: 20px;
+#turn-tracker, #result-display {
+    padding: 10px;
+    font-size: 25px;
+}
+
+#replayGame, #newGame, #submit_players { 
+  border: 3px solid rgb(47, 155, 33);
+  font-size: 20px;
+  margin: 10px;
+  align-self: center;
+  width: 200px
 }
