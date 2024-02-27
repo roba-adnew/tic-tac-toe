@@ -56,7 +56,7 @@ function enableGame(playerOne, playerTwo) {
     for (let space of gameSpaces) {   
         space.addEventListener('click', () => {
             const row = space.id.substring(1,2);
-            const col = space.id.substring(4,5);
+            const col = space.id.substring(3,4);
             const move  = [row,col];
 
             if (thisPlayersTurn == 1) {
@@ -78,13 +78,13 @@ function enableGame(playerOne, playerTwo) {
 
             if (playerOneWon) {
                 turnTracker.innerHTML = '';
-                resultDisplay.innerHTML = `${playerOne.Name} Wins!`;
+                resultDisplay.innerHTML = `${playerOne.name} Wins!`;
                 } 
             
             
             if (playerTwoWon) {
                 turnTracker.innerHTML = '';
-                resultDisplay.innerHTML = `${playerTwo.Name} Wins!`;
+                resultDisplay.innerHTML = `${playerTwo.name} Wins!`;
             }
 
             if (turns === 9) {
